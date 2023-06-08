@@ -1,0 +1,17 @@
+<div class="topContainer">
+  <div class="main">
+    <input type="checkbox" id="chk" aria-hidden="true">
+
+    <div class="login">
+      <form>
+        <br>
+        <br>
+        <br>
+        <label for="chk" aria-hidden="true">Login</label>
+        <input type="text" name="userName" placeholder="User Name" [(ngModel)]="loginObj.userLogin">
+        <input type="password" name="password" placeholder="Password" [(ngModel)]="loginObj.password">
+        <button (click)="onLogin()">Login</button>
+      </form>
+    </div>
+  </div>
+</div>
