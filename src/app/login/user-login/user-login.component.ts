@@ -23,9 +23,11 @@ export class UserLoginComponent implements OnInit {
     this.accService.login(this.loginObj).subscribe(
       (res: any) => {
         console.log('res', res);
-        debugger
+        
         sessionStorage.setItem('token', res.accessToken);
-        this.router.navigateByUrl('/dashboard?token=${res.token}');
+        // console.log('Access Token:', res.accessToken);
+        // console.log('Token:', res.token);
+        this.router.navigateByUrl(`/dashboard?token=${res.token}`);
       },
       (error: any) => {
 

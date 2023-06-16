@@ -1,50 +1,82 @@
 <body>
-    
-
-<div class="container main-box">
+  <div class="container main-box">
     <h2 class="d-flex justify-content-center">Welcome to the Dashboard</h2>
   
-   <form> 
+    <form [formGroup]="questionForm"> 
       <div class="form-group mt-3">
-      <label for="questionIdInput"><b> Question :</b></label>
-      <input type="text" class="form-control" id="questionIdInput" [(ngModel)]="questionText" name="questionText" placeholder="Enter the question" style="height: 50px">
-    </div>
+        <label for="questionIdInput"><b> Question :</b></label>
+        <input type="text" class="form-control" id="questionIdInput" formControlName="questionText" placeholder="Enter the question" style="height: 50px">
+      </div>
   
-    <div class="form-group mt-3">
-      <label for="domainInput"> <b> Question Code: </b></label>
-      <input type="text" class="form-control" id="domainInput" [(ngModel)]="code" name="code" placeholder="Enter the question code" style="height: 50px">
-    </div>
+      <div class="form-group mt-3">
+        <label for="domainInput"><b> Question Code: </b></label>
+        <input type="text" class="form-control" id="domainInput" formControlName="code" placeholder="Enter the question code" style="height: 50px">
+      </div>
   
-    <div class="form-group mt-3">
-      <label for="labelInput"> <b> Marks: </b></label>
-      <input type="number" class="form-control" id="labelInput" [(ngModel)]="weight" name="weight" placeholder="Enter the marks" style="height: 50px">
-    </div>
+      <div class="form-group mt-3">
+        <label for="labelInput"><b> Marks: </b></label>
+        <input type="number" class="form-control" id="labelInput" formControlName="weight" placeholder="Enter the marks" style="height: 50px">
+      </div>
     </form>
     
     <div class="d-flex justify-content-center">
-        <button class="btn btn-primary mt-3" style="width: 80%;" (click)="submitQuestion()">Submit</button>
-      </div>
-        </div>
-  <br>
-
-
-
-    <!-- Display submitted data -->
-    <div class="d-flex justify-content-center" *ngIf="questionText || code || weight">
-      <p><b>Question:</b> {{ questionText }}</p>
-      <p><b>Question Code:</b> {{ code }}</p>
-      <p><b>Marks:</b> {{ weight }}</p>
+      <button class="btn btn-primary mt-3" style="width: 80%;" (click)="submitQuestion()">Submit</button>
+      <!-- <button class="btn btn-success mt-3 ml-2" style="width: 80%;" (click)="addQuestion()">Add More</button> -->
     </div>
-  
+    
+  </div>
+  <br>
+  <div class="d-flex justify-content-center">
+  <form [formGroup]="questionForm" (ngSubmit)="submitQuestion()">
+    <div formArrayName="questionArray">
+      <div *ngFor="let questionGroup of questionArray.controls; let i = index">
+        <div [formGroupName]="i">
 
-  
-  <div class="container main-box" >
-    <h2 class="d-flex justify-content-center">Fetched Questions</h2>
-  
+          <label>Question Text:</label>
+          <br>
+          <input type="text" formControlName="questionText" placeholder="Enter question text" required>
+          <br>
+          <label>Code:</label>
+          <br>
+          <input type="text" formControlName="code" placeholder="Enter code" required>
+          <br>
+          <label>Weight:</label>
+          <br>
+
+          <input type="text" formControlName="weight" placeholder="Enter weight" required>
+          <br>
+          
+         <br>
+          <button type="button" class="btn btn-danger" (click)="removeQuestion(i)">remove</button>
+
+          <!-- &nbsp; &nbsp; &nbsp; <button type="button" class="btn btn-success" (click)="submitQuestion()">Success</button> -->
+        </div>
+      </div>
+    </div>
+    <br>
+    
+    <button type="button" class="btn btn-warning" (click)="addQuestion()">Add Question</button>
    
+
+    <br>
+
+   
+  </form>
+</div>
+
+  <!-- Display submitted data -->
+  <!-- <div class="d-flex justify-content-center" *ngIf="questionForm.valid">
+    <p><b>Question:</b> {{ questionForm.get('questionText')?.value }}</p>
+    <p><b>Question Code:</b> {{ questionForm.get('code')?.value }}</p>
+    <p><b>Marks:</b> {{ questionForm.get('weight')?.value }}</p>
+  </div> -->
+
+  <div class="container main-box">
+    <h2 class="d-flex justify-content-center">Fetched Questions</h2>
+
     <!-- Display fetched questions -->
     <ul class="list-group" class="input-bg">
-      <li class="list-group-item" *ngFor="let question of questions" >
+      <li class="list-group-item" *ngFor="let question of questions">
         <div class="card" class="input-bg">
           <div class="card-body">
             <h5 class="card-title bg-secondary text-white p-2 rounded-top">Id: {{ question.id }}</h5>
@@ -52,14 +84,14 @@
               <div class="col">
                 <h5 class="card-title">Text:</h5>
                 <p class="card-text">
-                  <span [hidden]="question.editMode">{{ question.questionClass.labels[0].text }}</span>
-                  <input type="text" [(ngModel)]="question.questionClass.labels[0].text" class="form-control" [hidden]="!question.editMode" />
+                  <span [hidden]="question.editMode">{{ question.questionText[0].text }}</span>
+                  <input type="text" [(ngModel)]="question.questionText[0].text" class="form-control" [hidden]="!question.editMode" />
                 </p>
               </div>
             </div>
             <div class="row mt-3">
               <div class="col">
-                <p class="card-text"> <b> Code: {{ question.questionClass.labels[0].language.code }}</b></p>
+                <p class="card-text"><b> Code: {{ question.questionClass.labels[0].language.code }}</b></p>
               </div>
               <div class="col">
                 <p class="card-text"><b> Weight: {{ question.weight }}</b></p>
@@ -75,8 +107,8 @@
         </div>
       </li>
     </ul>
-    
-    
-   
   </div>
+
+
+  
 </body>

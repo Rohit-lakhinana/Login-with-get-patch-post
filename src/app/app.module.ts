@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
@@ -13,20 +13,25 @@ import { DashboardComponent } from './dashboard/dashboard.component';
   declarations: [
     AppComponent,
     UserLoginComponent,
-    DashboardComponent
+    DashboardComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule,
+
+    
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: CustomInterceptor,
-      multi: true
-    }
+      multi: true,
+      
+    },
+    
   ],
   bootstrap: [AppComponent]
 })
