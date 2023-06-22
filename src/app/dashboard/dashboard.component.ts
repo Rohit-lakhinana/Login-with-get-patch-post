@@ -13,13 +13,12 @@ export class DashboardComponent implements OnInit {
   questions: any[] = [];
   questionForm!: FormGroup;
   token: any;
-  apiEndpoint = 'https://dev.platformcommons.org/gateway/assessment-service/api/v1/questions';
 
   questionArray: FormArray<FormGroup<any>> = new FormArray<FormGroup<any>>([]);
 
   constructor(
     private formBuilder: FormBuilder,
-    private accService: AccountService,
+    private accountService: AccountService,
     private http: HttpClient
   ) {}
 
@@ -36,6 +35,8 @@ export class DashboardComponent implements OnInit {
     });
 
     this.questionArray = this.questionForm.get('questionArray') as FormArray<FormGroup<any>>; // Initialize questionArray property
+
+    this.loadQuestionsFromJSON(); // Load questions from JSON file
   }
 
   retrieveStoredQuestions() {
@@ -50,14 +51,10 @@ export class DashboardComponent implements OnInit {
   }
 
   fetchQuestions(id: any) {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.token}`
-    });
-
     if (typeof id === 'number') {
       this.questions = this.questions.filter(values => values.id !== id);
     } else {
-      this.http.get(`${this.apiEndpoint}?page=10&size=${this.size}`, { headers }).subscribe(
+      this.accountService.fetchQuestions(this.token, this.size).subscribe(
         (response) => {
           this.questions = response as any[];
           this.storeQuestionsInSessionStorage();
@@ -78,50 +75,7 @@ export class DashboardComponent implements OnInit {
   }
 
   saveQuestion(question: any) {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.token}`
-    });
-
-    const updatedFormData = {
-      id: question.id,
-      tenant: 0,
-      domain: 'DOMAIN.HEALTH',
-      questionCode: question.questionCode,
-      questionClass: {
-        code: 'QUESTION_CLASS.QUESTION'
-      },
-      questionType: {
-        code: 'QUESTION_TYPE.SUBJECTIVE_LONG'
-      },
-      questionText: [
-        {
-          text: question.questionText[0].text,
-          language: {
-            code: 'ENG',
-            label: 'English'
-          }
-        }
-      ],
-      questionSubText: [
-        {
-          text: '',
-          language: {
-            code: 'ENG',
-            label: 'English'
-          }
-        }
-      ],
-      questionName: [],
-      weight: question.weight,
-      tenantId: 0,
-      questionImageURL: '',
-      defaultOptionsList: [],
-      questionSubtype: {
-        code: 'QUESTION_SUB_TYPE.SUBJECTIVE'
-      }
-    };
-
-    this.http.patch(this.apiEndpoint, updatedFormData, { headers }).subscribe(
+    this.accountService.updateQuestion(this.token, question).subscribe(
       () => {
         console.log('Question updated');
         question.editMode = false;
@@ -134,11 +88,7 @@ export class DashboardComponent implements OnInit {
   }
 
   deleteQuestion(id: any) {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.token}`
-    });
-
-    this.http.delete(`${this.apiEndpoint}/${id}`, { headers }).subscribe(
+    this.accountService.deleteQuestion(this.token, id).subscribe(
       () => {
         console.log('Question deleted');
         this.fetchQuestions(id);
@@ -150,53 +100,14 @@ export class DashboardComponent implements OnInit {
   }
 
   submitQuestion() {
-   console.log(this.questionForm)
-   return
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.token}`
-    });
-  
+    console.log(this.questionForm);
+    return;
+
     const questionData = {
-      id: 0,
-      tenant: 0,
-      domain: 'DOMAIN.HEALTH',
-      questionCode: 'FB_001',
-      questionClass: {
-        code: 'QUESTION_CLASS.QUESTION'
-      },
-      questionType: {
-        code: 'QUESTION_TYPE.SUBJECTIVE_LONG'
-      },
-      questionText: [
-        {
-          text: this.questionForm.value.questionText,
-          language: {
-            code: 'ENG',
-            label: 'English'
-          }
-        }
-      ],
-      questionSubText: [
-        {
-          text: '',
-          language: {
-            code: 'ENG',
-            label: 'English'
-          }
-        }
-      ],
-      questionName: [],
-      weight: this.questionForm.value.weight,
-      tenantId: 0,
-      questionImageURL: '',
-      defaultOptionsList: [],
-      questionSubtype: {
-        code: 'QUESTION_SUB_TYPE.SUBJECTIVE'
-      },
-      questionArray: this.questionArray.value // Add questionArray property
+      // questionData properties...
     };
-  
-    this.http.post(this.apiEndpoint, questionData, { headers }).subscribe(
+
+    this.accountService.submitQuestion(this.token, questionData).subscribe(
       () => {
         console.log('Question submitted');
         this.questionForm.reset();
@@ -222,5 +133,16 @@ export class DashboardComponent implements OnInit {
 
   removeQuestion(index: number) {
     this.questionArray.removeAt(index);
+  }
+
+  loadQuestionsFromJSON() {
+    this.http.get<any[]>('/assets/questions.json').subscribe(
+      (response) => {
+        this.questions = response as any[];
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   }
 }

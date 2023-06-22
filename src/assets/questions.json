@@ -1,0 +1,40 @@
+{
+    "id": 0,
+    "tenant": 0,
+    "domain": "DOMAIN.HEALTH",
+    "questionCode": "FB_001",
+    "questionClass": {
+      "code": "QUESTION_CLASS.QUESTION"
+    },
+    "questionType": {
+      "code": "QUESTION_TYPE.SUBJECTIVE_LONG"
+    },
+    "questionText": [
+      {
+        "text": "{{questionText}}",
+        "language": {
+          "code": "ENG",
+          "label": "English"
+        }
+      }
+    ],
+    "questionSubText": [
+      {
+        "text": "",
+        "language": {
+          "code": "ENG",
+          "label": "English"
+        }
+      }
+    ],
+    "questionName": [],
+    "weight": "{{weight}}",
+    "tenantId": 0,
+    "questionImageURL": "",
+    "defaultOptionsList": [],
+    "questionSubtype": {
+      "code": "QUESTION_SUB_TYPE.SUBJECTIVE"
+    },
+    "questionArray": []
+  }
+  
